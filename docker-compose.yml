@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    ports:
+      - '${BACKEND_PORT:-5001}:${BACKEND_PORT:-5001}'
+    environment:
+      - PORT=${BACKEND_PORT:-5001}
+    env_file:
+      - .env
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    ports:
+      - '${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}'
+    environment:
+      - FRONTEND_PORT=${FRONTEND_PORT:-3000}
+    env_file:
+      - .env
+    depends_on:
+      - backend
+
+  e2e:
+    build:
+      context: .
+      dockerfile: e2e/Dockerfile
+    environment:
+      - FRONTEND_PORT=${FRONTEND_PORT:-3000}
+      - TEST_HOST=frontend # Ensure Playwright targets frontend correctly
+    env_file:
+      - .env
+    depends_on:
+      - frontend
+      - backend

@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run commitlint to ensure commit messages follow the convention
+pnpm exec commitlint --edit $1

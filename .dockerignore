@@ -1,0 +1,8 @@
+inode_modules
+dist
+.pnpm-store
+.husky
+.git
+.gitignore
+.vscode
+.DS_Store

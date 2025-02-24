@@ -1,0 +1,13 @@
+# Root-level ignores
+node_modules
+dist
+*.log
+
+# Ignore frontend and backend node_modules and build artifacts
+/frontend/node_modules
+/frontend/dist
+/backend/node_modules
+/backend/dist
+
+# Ignore local .env
+.env
