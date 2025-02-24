@@ -1,11 +1,14 @@
-import { defineConfig } from 'vite';
-import { vitest } from 'vitest/config';
+import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
 export default defineConfig({
   test: {
     globals: true,
-    environment: 'jsdom',
-    setupFiles: ['./vitest.setup.ts'], // Add a setup file for jest-dom matchers
+    environment: "jsdom",
+    coverage: {
+      provider: "istanbul",
+      reporter: ["text", "json", "html", "lcov"],
+    },
+    setupFiles: ["./vitest.setup.ts"], // Add a setup file for jest-dom matchers
   },
 });
