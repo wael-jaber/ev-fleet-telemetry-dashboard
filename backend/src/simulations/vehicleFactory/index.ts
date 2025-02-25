@@ -1,0 +1,1 @@
+export { createVehicles } from "./vehicleFactory";

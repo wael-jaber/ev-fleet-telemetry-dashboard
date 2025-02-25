@@ -1,7 +1,13 @@
 import { Server as HttpServer } from "http";
 import { WebSocketServer, WebSocket, RawData } from "ws";
 import { Buffer } from "buffer";
-import { IWebSocketMessage, EchoMessage } from "@shared/types";
+import {
+  IWebSocketMessage,
+  EchoMessage,
+  TelemetryBulkUpdateMessage,
+  TelemetryData,
+} from "@shared/types";
+import { SimulationManager } from "../simulations";
 
 /**
  * WebSocketManager encapsulates all WebSocket logic.
@@ -10,11 +16,13 @@ import { IWebSocketMessage, EchoMessage } from "@shared/types";
 export class WebSocketManager {
   private static instance: WebSocketManager | null = null;
   private wss: WebSocketServer;
+  private simulationManager: SimulationManager;
 
-  // Private constructor enforces use of getInstance or createNewInstance.
   private constructor(server: HttpServer) {
     this.wss = new WebSocketServer({ server, path: "/ws" });
+    this.simulationManager = SimulationManager.getInstance(10);
     this.registerEvents();
+    this.startSimulation();
   }
 
   /**
@@ -51,26 +59,20 @@ export class WebSocketManager {
       ws.on("message", (message: RawData) => {
         let text: string;
 
-        // If the message is a Buffer, convert it directly.
+        // Handle different message formats
         if (Buffer.isBuffer(message)) {
           text = message.toString();
-        }
-        // If the message is an ArrayBuffer, wrap it with Uint8Array and then convert.
-        else if (message instanceof ArrayBuffer) {
+        } else if (message instanceof ArrayBuffer) {
           text = Buffer.from(new Uint8Array(message)).toString();
-        }
-        // If the message is an array of Buffers, concatenate them and convert.
-        else if (Array.isArray(message)) {
+        } else if (Array.isArray(message)) {
           text = Buffer.concat(message as Buffer[]).toString();
-        }
-        // Fallback to string conversion.
-        else {
+        } else {
           text = String(message);
         }
 
         console.log("Received message:", text);
 
-        // Echo the received message back.
+        // Echo the received message back
         const echoMessage: EchoMessage = {
           type: "echo",
           payload: { data: text },
@@ -93,9 +95,38 @@ export class WebSocketManager {
   }
 
   /**
+   * Starts the simulation and defines the telemetry broadcasting logic.
+   */
+  private startSimulation(): void {
+    console.log("Starting simulation via SimulationManager...");
+
+    // Define how telemetry data is broadcasted
+    this.simulationManager.onGetTelemetry((telemetryData: TelemetryData[]) => {
+      this.broadcastTelemetry(telemetryData);
+    });
+
+    this.simulationManager.start();
+  }
+
+  /**
+   * Broadcasts telemetry data to all connected clients.
+   */
+  private broadcastTelemetry(
+    telemetryData: TelemetryBulkUpdateMessage["payload"],
+  ): void {
+    const message: TelemetryBulkUpdateMessage = {
+      type: "telemetryBulkUpdate",
+      payload: telemetryData,
+      timestamp: new Date().toISOString(),
+    };
+
+    this.broadcast(message);
+  }
+
+  /**
    * Broadcasts a WebSocket message to all connected clients.
    */
-  public broadcast(message: IWebSocketMessage): void {
+  private broadcast(message: IWebSocketMessage): void {
     const data = JSON.stringify(message);
     this.wss.clients.forEach((client: WebSocket) => {
       if (client.readyState === WebSocket.OPEN) {
@@ -104,12 +135,3 @@ export class WebSocketManager {
     });
   }
 }
-
-/**
- * Helper factory function for test isolation.
- */
-export const createWebSocketManager = (
-  server: HttpServer,
-): WebSocketManager => {
-  return WebSocketManager.createNewInstance(server);
-};

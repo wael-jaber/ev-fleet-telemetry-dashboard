@@ -4,6 +4,7 @@ import http from "http";
 
 // We'll get types from our WebSocketManager module.
 import type { WebSocketManager } from "../WebSocketManager";
+import { IWebSocketMessage } from "@shared/types";
 
 let server: http.Server;
 let port: number;
@@ -30,9 +31,9 @@ describe("WebSocketManager", () => {
     });
 
     // Dynamically import the WebSocketManager module.
-    const wsModule = await import("../WebSocketManager");
+    const { WebSocketManager } = await import("../WebSocketManager");
     // Create an isolated instance (factory) so the singleton state is not reused.
-    wsManager = wsModule.createWebSocketManager(server);
+    wsManager = WebSocketManager.getInstance(server);
     wsManager.start();
   });
 
@@ -96,14 +97,14 @@ describe("WebSocketManager", () => {
           client1.on("message", onMessage);
           // If client2 is already open, trigger broadcast.
           if (client2.readyState === WebSocket.OPEN) {
-            wsManager.broadcast(testMessage);
+            wsManager["broadcast"](testMessage as IWebSocketMessage);
           }
         });
 
         client2.on("open", () => {
           client2.on("message", onMessage);
           if (client1.readyState === WebSocket.OPEN) {
-            wsManager.broadcast(testMessage);
+            wsManager["broadcast"](testMessage as IWebSocketMessage);
           }
         });
       });
