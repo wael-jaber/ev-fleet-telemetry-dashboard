@@ -20,7 +20,7 @@ RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
     && pnpm rebuild esbuild
 
 
-COPY . .
+COPY ./backend ./backend
 
 WORKDIR /app/backend
 
