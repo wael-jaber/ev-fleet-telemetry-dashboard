@@ -21,7 +21,6 @@ services:
     environment:
       - FRONTEND_PORT=${FRONTEND_PORT:-3000}
       - BACKEND_PORT=${BACKEND_PORT:-5001}
-      - BACKEND_HOST=${BACKEND_HOST}
     env_file:
       - .env
     depends_on:

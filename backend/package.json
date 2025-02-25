@@ -4,6 +4,7 @@
   "description": "",
   "main": "dist/bundle.js",
   "scripts": {
+    "dev": "nodemon --watch src --ext ts --exec ts-node src/index.ts",
     "build": "tsc --noEmit && esbuild src/index.ts --bundle --platform=node --target=node20 --outfile=dist/bundle.js",
     "start": "node dist/bundle.js",
     "test": "vitest run",
@@ -31,9 +32,13 @@
     "eslint": "^9.21.0",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
+    "nodemon": "^3.1.9",
     "prettier": "^3.5.2",
     "supertest": "^7.0.0",
+    "ts-node": "^10.9.2",
     "typescript": "~5.7.2",
+    "vite": "^6.1.0",
+    "vite-plugin-node": "^4.0.0",
     "vitest": "^3.0.6"
   }
 }

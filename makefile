@@ -52,21 +52,3 @@ test-e2e:
 	@echo "Executing end-to-end tests..."
 	cd e2e && pnpm run test
 
-# TESTING IN DOCKER
-
-docker-test-backend:
-	@echo "Executing backend tests in Docker..."
-	docker-compose --env-file .env run --rm backend pnpm run test
-
-docker-test-frontend:
-	@echo "Executing frontend tests in Docker..."
-	docker-compose --env-file .env run --rm frontend pnpm run test
-
-docker-test:
-	@echo "Executing all tests in Docker (excluding end-to-end tests)..."
-	docker-compose --env-file .env run --rm backend pnpm run test
-	docker-compose --env-file .env run --rm frontend pnpm run test
-
-docker-test-e2e:
-	@echo "Executing end-to-end tests in Docker..."
-	docker-compose --env-file .env up --abort-on-container-exit e2e
