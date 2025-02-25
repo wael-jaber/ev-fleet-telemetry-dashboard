@@ -1,0 +1,81 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - '**'
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  frontend-tests:
+    name: Frontend Lint & Test (with Coverage)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm@latest
+
+      - name: Install Dependencies
+        run: |
+          cd frontend
+          pnpm install
+
+      - name: Lint Frontend Code
+        run: |
+          cd frontend
+          pnpm run lint
+
+      - name: Run Frontend Tests & Generate Coverage
+        run: |
+          cd frontend
+          pnpm run coverage
+
+      - name: Upload Frontend Coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: wael-jaber/ev-fleet-telemetry-dashboard
+          files: ./frontend/coverage/lcov.info
+          flags: frontend
+          name: frontend-coverage-${{ github.ref_name }}
+
+  backend-tests:
+    name: Backend Lint & Test (with Coverage)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        run: npm install -g pnpm@latest
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          pnpm install
+
+      - name: Lint Backend Code
+        run: |
+          cd backend
+          pnpm run lint
+
+      - name: Run Backend Tests & Generate Coverage
+        run: |
+          cd backend
+          pnpm run test -- --coverage
+
+      - name: Upload Backend Coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          slug: wael-jaber/ev-fleet-telemetry-dashboard
+          files: ./backend/coverage/lcov.info
+          flags: backend
+          name: backend-coverage-${{ github.ref_name }}

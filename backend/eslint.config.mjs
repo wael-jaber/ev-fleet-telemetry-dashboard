@@ -7,6 +7,7 @@ import prettierConfig from "eslint-config-prettier";
 export default [
   js.configs.recommended, // built-in recommended rules
   {
+    ignores: ["dist/", "coverage/", "node_modules/", "**/*.test.ts"],
     files: ["**/*.ts"],
     languageOptions: {
       parser: tsParser,
