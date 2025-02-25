@@ -1,2 +1,1 @@
-export { IMessage } from "./types";
-export { WebSocketManager, createWebSocketManager } from "./WebSocketManager";
+export { WebSocketManager, createWebSocketManager } from './WebSocketManager';
