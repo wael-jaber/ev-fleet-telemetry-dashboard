@@ -6,6 +6,6 @@ export default defineConfig({
       provider: "istanbul",
       reporter: ["text", "json", "html", "lcov"],
     },
-    exclude: ["**/types/**", "**/node_modules/**"], // Exclude types directories and node_modules
+    exclude: ["**/types/**", "**/node_modules/**"],
   },
 });

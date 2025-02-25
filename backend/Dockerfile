@@ -21,6 +21,7 @@ RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
 
 
 COPY ./backend ./backend
+COPY ./shared ./shared
 
 WORKDIR /app/backend
 
