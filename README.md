@@ -2,7 +2,7 @@
 
 The EV Fleet Telemetry Dashboard is a web application designed to monitor real-time telemetry data from electric vehicles. It consists of:
 
-- Frontend: A dashboard built with React/Vue/Angular/Svelte.
+- Frontend: A dashboard built with React.
 - Backend: An Express-based WebSocket server that simulates real-time vehicle telemetry data.
 - Testing & CI/CD: Automated unit and integration tests, with support for end-to-end testing.
 
