@@ -11,6 +11,16 @@ export default defineConfig({
     // Use the VITE_FRONTEND_PORT from the root .env
     port: Number(process.env.FRONTEND_PORT) || 3000,
   },
+  resolve: {
+    alias: {
+      "@redux": path.resolve(__dirname, "src/redux"),
+      "@utils": path.resolve(__dirname, "src/utils"),
+      "@components": path.resolve(__dirname, "src/components"),
+      "@containers": path.resolve(__dirname, "src/containers"),
+      "@theme": path.resolve(__dirname, "src/theme"),
+      "@shared": path.resolve(__dirname, "../shared"),
+    },
+  },
   // @ts-expect-error : they haven't fixed this still
   test: {
     globals: true,

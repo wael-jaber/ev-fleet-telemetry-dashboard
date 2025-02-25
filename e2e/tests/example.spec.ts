@@ -2,5 +2,5 @@ import { test, expect } from '@playwright/test';
 
 test('homepage has expected title', async ({ page }) => {
   await page.goto('/');
-  await expect(page).toHaveTitle('Vite + React + TS');
+  await expect(page).toHaveTitle('EV Fleet Telemetry Dashboard');
 });
