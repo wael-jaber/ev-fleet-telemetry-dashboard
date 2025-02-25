@@ -55,7 +55,7 @@ export type WebSocketMessageType = 'telemetryBulkUpdate' | 'echo' | 'error';
  */
 export interface IWebSocketMessage {
   // Message type, e.g. "telemetryBulkUpdate", "echo", or "error".
-  type: WebSocketMessageType | string;
+  type: WebSocketMessageType;
   /**
    * Payload contains the message data.
    * For telemetry bulk updates, it's an array of TelemetryData.
