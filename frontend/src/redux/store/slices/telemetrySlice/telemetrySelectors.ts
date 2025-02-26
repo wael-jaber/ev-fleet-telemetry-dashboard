@@ -76,3 +76,12 @@ export const selectFleetStats = createSelector(
     };
   },
 );
+
+export const selectLatestTelemetryArray = createSelector(
+  [(state: RootState) => state.telemetry.vehicles],
+  (vehicles) => {
+    return Object.values(vehicles)
+      .map((vehicle) => vehicle.history.at(-1)) // Get latest telemetry safely
+      .filter((telemetry): telemetry is TelemetryData => Boolean(telemetry)); // Remove undefined/null
+  },
+);

@@ -32,7 +32,7 @@ export const VehicleList: React.FC = () => {
 
   return (
     <Box sx={{ p: 2 }}>
-      <List component="nav" sx={{ overflowY: "auto", maxHeight: "50vh" }}>
+      <List component="nav" sx={{ overflowY: "visible" }}>
         {/* "All Vehicles" with Filter Button Inside */}
         <ListItemButton
           selected={selectedVehicle === "all"}

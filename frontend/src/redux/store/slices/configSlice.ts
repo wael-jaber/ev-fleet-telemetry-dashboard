@@ -1,27 +1,54 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { ComponentPanel, PanelConfigRedux } from "@utils/types";
 
 // Define the type for panel positions
 interface PanelPositions {
-  desktop: Record<string, { x: number; y: number; w: number; h: number }>;
-  mobile: Record<string, { x: number; y: number; w: number; h: number }>;
+  desktop: PanelConfigRedux[];
+  mobile: PanelConfigRedux[];
 }
 
 // Initial panel positions (can be updated by the user)
 const initialPanelPositions: PanelPositions = {
-  desktop: {
-    fleetOverview: { x: 0, y: 0, w: 2, h: 2 },
-    vehicleList: { x: 0, y: 2, w: 2, h: 2 },
-    fleetMap: { x: 2, y: 0, w: 4, h: 3 },
-    vehicleDetails: { x: 2, y: 3, w: 4, h: 2 },
-    alerts: { x: 2, y: 5, w: 4, h: 2 },
-  },
-  mobile: {
-    fleetOverview: { x: 0, y: 0, w: 3, h: 1 },
-    vehicleList: { x: 0, y: 1, w: 3, h: 1 },
-    fleetMap: { x: 0, y: 2, w: 3, h: 2 },
-    vehicleDetails: { x: 0, y: 4, w: 3, h: 1 },
-    alerts: { x: 0, y: 5, w: 3, h: 1 },
-  },
+  desktop: [
+    {
+      id: "speed",
+      title: "Speed1",
+      component: ComponentPanel.speed,
+      layout: { x: 0, y: 1, w: 1, h: 1 },
+    },
+    {
+      id: "battery",
+      title: "Battery1",
+      component: ComponentPanel.battery,
+      layout: { x: 1, y: 1, w: 1, h: 1 },
+    },
+    {
+      id: "location",
+      title: "Location1",
+      component: ComponentPanel.location,
+      layout: { x: 0, y: 0, w: 2, h: 1 },
+    },
+  ],
+  mobile: [
+    {
+      id: "speed",
+      title: "Speed2",
+      component: ComponentPanel.speed,
+      layout: { x: 0, y: 0, w: 1, h: 2 },
+    },
+    {
+      id: "battery2",
+      title: "Battery2",
+      component: ComponentPanel.battery,
+      layout: { x: 0, y: 1, w: 1, h: 2 },
+    },
+    {
+      id: "location2",
+      title: "Location2",
+      component: ComponentPanel.location,
+      layout: { x: 0, y: 2, w: 2, h: 2 },
+    },
+  ],
 };
 
 interface ConfigState {
@@ -42,11 +69,34 @@ const configSlice = createSlice({
       state.theme = state.theme === "light" ? "dark" : "light";
       localStorage.setItem("theme", state.theme);
     },
-    updatePanelPositions(state, action: PayloadAction<PanelPositions>) {
-      state.panelPositions = action.payload;
+    updateMobilePanelPositions(
+      state,
+      action: PayloadAction<Pick<PanelConfigRedux, "id" | "layout">[]>,
+    ) {
+      action.payload.forEach(({ id, layout }) => {
+        const panel = state.panelPositions.mobile.find((p) => p.id === id);
+        if (panel) {
+          panel.layout = layout;
+        }
+      });
+    },
+    updateDesktopPanelPositions(
+      state,
+      action: PayloadAction<Pick<PanelConfigRedux, "id" | "layout">[]>,
+    ) {
+      action.payload.forEach(({ id, layout }) => {
+        const panel = state.panelPositions.desktop.find((p) => p.id === id);
+        if (panel) {
+          panel.layout = layout;
+        }
+      });
     },
   },
 });
 
-export const { toggleTheme, updatePanelPositions } = configSlice.actions;
+export const {
+  toggleTheme,
+  updateMobilePanelPositions,
+  updateDesktopPanelPositions,
+} = configSlice.actions;
 export default configSlice.reducer;

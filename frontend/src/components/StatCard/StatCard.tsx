@@ -1,7 +1,7 @@
 import React from "react";
 import { Card, CardContent, Typography, Box } from "@mui/material";
 
-interface StatCardProps {
+export interface StatCardProps {
   title: string;
   value: string | number;
   icon: React.ReactNode;

@@ -4,4 +4,8 @@ export {
   setSelectedVehicle,
   setWebSocketConnected,
 } from "./telemetrySlice";
-export { selectFilteredVehicles, selectFleetStats } from "./telemetrySelectors";
+export {
+  selectFilteredVehicles,
+  selectFleetStats,
+  selectLatestTelemetryArray,
+} from "./telemetrySelectors";

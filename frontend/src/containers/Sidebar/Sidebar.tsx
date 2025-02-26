@@ -13,6 +13,8 @@ import { DarkModeToggle } from "@containers/DarkModeToggle";
 import { FleetOverview } from "@containers/FleetOverview";
 import { VehicleList } from "@containers/VehicleList";
 
+const SIDEBAR_WIDTH = 260; // Ensure consistency across Dashboard.tsx
+
 export const Sidebar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
@@ -22,7 +24,7 @@ export const Sidebar: React.FC = () => {
   const sidebarContent = useMemo(
     () => (
       <Box
-        width={260}
+        width={SIDEBAR_WIDTH}
         height="100vh"
         display="flex"
         flexDirection="column"
@@ -63,7 +65,6 @@ export const Sidebar: React.FC = () => {
               Vehicle List
             </Typography>
           </Divider>
-
           <Box>
             <VehicleList />
           </Box>
@@ -77,24 +78,20 @@ export const Sidebar: React.FC = () => {
     <>
       {/* Mobile: Floating Burger Menu Button */}
       {isMobile && (
-        <>
-          <IconButton
-            onClick={toggleDrawer}
-            sx={{
-              position: "absolute",
-              top: 10,
-              left: 10,
-              bgcolor: "background.paper",
-              borderRadius: "50%",
-              boxShadow: 2,
-            }}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" margin={"auto"}>
-            CUBONIC Fleet
-          </Typography>
-        </>
+        <IconButton
+          onClick={toggleDrawer}
+          sx={{
+            position: "fixed",
+            top: 10,
+            left: 10,
+            bgcolor: "background.paper",
+            borderRadius: "50%",
+            boxShadow: 2,
+            zIndex: 1300, // Ensures it stays above other elements
+          }}
+        >
+          <MenuIcon />
+        </IconButton>
       )}
 
       {/* Sidebar Drawer */}
@@ -103,13 +100,16 @@ export const Sidebar: React.FC = () => {
         open={isMobile ? mobileOpen : true}
         onClose={toggleDrawer}
         sx={{
+          width: SIDEBAR_WIDTH,
+          flexShrink: 0,
           "& .MuiDrawer-paper": {
-            width: 260,
+            width: SIDEBAR_WIDTH,
             boxSizing: "border-box",
             position: isMobile ? "absolute" : "fixed",
             left: 0,
             top: 0,
             height: "100vh",
+            zIndex: 1200, // Ensures it stays above the grid but below the menu button
           },
         }}
       >
