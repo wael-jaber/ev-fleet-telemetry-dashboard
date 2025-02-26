@@ -1,6 +1,7 @@
 import { createSelector } from "@reduxjs/toolkit";
 import { RootState } from "@redux/store";
 import { roundToTwoDecimals } from "@utils/index";
+import { ChargeStatus, TelemetryData } from "@shared/types";
 
 /**
  * Selector: Gets filtered vehicle IDs based on filter conditions (to be implemented later).
@@ -11,7 +12,7 @@ export const selectFilteredVehicles = createSelector(
     return Object.keys(vehicles).filter((vehicleId) => {
       const vehicle = vehicles[vehicleId];
       const lastTelemetry = vehicle.history.length
-        ? vehicle.history[vehicle.history.length - 1]
+        ? vehicle.history[vehicle.history.length - 1] // Get the most recent telemetry
         : null;
 
       if (!lastTelemetry) return false; // Ignore vehicles without telemetry
@@ -23,23 +24,32 @@ export const selectFilteredVehicles = createSelector(
 );
 
 /**
- * Selector: Computes average fleet-wide statistics.
+ * Selector: Computes fleet-wide statistics based on the latest telemetry.
  */
 export const selectFleetStats = createSelector(
   [(state: RootState) => state.telemetry.vehicles],
+
   (vehicles) => {
+    console.log("Fleet stats selector fired"); // Debug log
+
     const lastDataPoints = Object.values(vehicles)
-      .map((vehicle) => vehicle.history[vehicle.history.length - 1])
-      .filter(Boolean);
+      .map((vehicle) => vehicle.history.at(-1)) // Get the latest telemetry safely
+      .filter((lastTelemetry): lastTelemetry is TelemetryData =>
+        Boolean(lastTelemetry),
+      ); // Remove undefined/null values
 
-    const totalVehicles = lastDataPoints.length;
+    const totalVehicles = Object.keys(vehicles).length;
 
-    if (totalVehicles === 0) {
+    // Filter active vehicles (only those that are discharging)
+    const activeVehicles = lastDataPoints.filter(
+      (data) => data.telemetry.chargeStatus === ChargeStatus.Discharging,
+    ).length;
+
+    if (activeVehicles === 0) {
       return {
-        totalVehicles: 0,
+        totalVehicles,
         activeVehicles: 0,
         averageBatteryLevel: 0,
-        totalDistanceTraveled: 0,
         averageEnergyConsumption: 0,
       };
     }
@@ -54,18 +64,14 @@ export const selectFleetStats = createSelector(
       0,
     );
 
-    const totalDistance = lastDataPoints.reduce(
-      (sum, data) => sum + data.telemetry.odometer,
-      0,
-    );
-
     return {
       totalVehicles,
-      activeVehicles: totalVehicles, // Placeholder until we implement online/offline tracking
-      averageBatteryLevel: roundToTwoDecimals(totalBattery / totalVehicles),
-      totalDistanceTraveled: roundToTwoDecimals(totalDistance),
+      activeVehicles,
+      averageBatteryLevel: roundToTwoDecimals(
+        totalBattery / lastDataPoints.length,
+      ),
       averageEnergyConsumption: roundToTwoDecimals(
-        totalEnergyConsumption / totalVehicles,
+        totalEnergyConsumption / lastDataPoints.length,
       ),
     };
   },

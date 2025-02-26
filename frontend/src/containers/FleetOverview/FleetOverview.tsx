@@ -3,7 +3,6 @@ import { Box, Grid } from "@mui/material";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import BatteryChargingFullIcon from "@mui/icons-material/BatteryChargingFull";
 import SpeedIcon from "@mui/icons-material/Speed";
-import RouteIcon from "@mui/icons-material/Route";
 import BoltIcon from "@mui/icons-material/Bolt";
 import { StatCard } from "@components/StatCard";
 import { useSelector } from "react-redux";
@@ -16,9 +15,8 @@ import { selectFleetStats } from "@redux/store/slices/telemetrySlice";
 export const FleetOverview: React.FC = () => {
   const {
     totalVehicles,
-    totalDistanceTraveled,
-    averageBatteryLevel,
     activeVehicles,
+    averageBatteryLevel,
     averageEnergyConsumption,
   } = useSelector(selectFleetStats);
 
@@ -55,15 +53,6 @@ export const FleetOverview: React.FC = () => {
                   ? "warning.main"
                   : "error.main"
             }
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <StatCard
-            title="Total Distance"
-            value={`${totalDistanceTraveled} km`}
-            icon={<RouteIcon fontSize="large" />}
-            iconColor="info.main"
           />
         </Grid>
 

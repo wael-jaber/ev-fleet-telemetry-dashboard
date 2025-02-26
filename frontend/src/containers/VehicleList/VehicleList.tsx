@@ -61,7 +61,7 @@ export const VehicleList: React.FC = () => {
         </ListItemButton>
 
         {/* Individual Vehicles */}
-        {vehicles.map((vehicle) => (
+        {vehicles.sort().map((vehicle) => (
           <ListItemButton
             key={vehicle}
             selected={selectedVehicle === vehicle}

@@ -12,6 +12,8 @@ export interface TelemetryData {
   // Unique identifier for the vehicle.
   vehicleId: string;
   telemetry: {
+    // time stamp for when this telemetry we captured
+    timeStamp: string;
     // Vehicle speed in kilometers per hour.
     speed: number;
     // Battery level as a percentage (0-100).

@@ -16,8 +16,9 @@ up-frontend:
 # Start both frontend and backend locally in parallel
 up:
 	@echo "Starting frontend and backend services..."
-	cd frontend && pnpm run dev &
-	cd backend && pnpm run dev &
+	@trap 'kill 0' SIGINT SIGTERM EXIT; \
+	cd frontend && pnpm run dev & \
+	cd backend && pnpm run dev & \
 	wait
 
 # DOCKER COMMANDS

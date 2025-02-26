@@ -24,9 +24,12 @@
     "paths": {
       "@redux/*": ["./src/redux/*"],
       "@utils/*": ["./src/utils/*"],
+      "@consts/*": ["./src/consts/*"],
       "@components/*": ["./src/components/*"],
       "@containers/*": ["./src/containers/*"],
       "@theme/*": ["./src/theme/*"],
+      "@api/*": ["./src/api/*"],
+      "@websocket/*": ["./src/websocket/*"],
       "@shared/*": ["./../shared/*"]
     }
   },
