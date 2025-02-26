@@ -46,6 +46,9 @@ export class Vehicle {
     this.depleteBattery();
     this.updateSpeedAndMove();
     this.calculateEnergyConsumption();
+
+    this.telemetry.timeStamp = new Date().toISOString();
+
     this.scheduleNextUpdate();
   }
 

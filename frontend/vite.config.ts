@@ -22,6 +22,7 @@ export default defineConfig({
       "@components": path.resolve(__dirname, "src/components"),
       "@containers": path.resolve(__dirname, "src/containers"),
       "@theme": path.resolve(__dirname, "src/theme"),
+      "@storyHelpers": path.resolve(__dirname, "src/storyHelpers"),
       "@websocket": path.resolve(__dirname, "src/websocket"),
       "@api": path.resolve(__dirname, "src/api"),
       "@shared": path.resolve(__dirname, "../shared"),

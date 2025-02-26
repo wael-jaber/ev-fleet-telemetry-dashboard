@@ -68,7 +68,6 @@ export const Map: React.FC<MapProps> = ({ dataPoints, iconMapper }) => {
           <Marker
             key={point.id}
             position={[point.lat, point.lng]}
-            // @ts-expect-error: lib issue
             icon={iconMapper(point.id)}
           />
         ))}

@@ -9,14 +9,14 @@ import {
   updateMobilePanelPositions,
 } from "@redux/store/slices/configSlice";
 import { ComponentPanel } from "@utils/types";
-import { MapPanel } from "@containers/Panels";
+import { BatteryPanel, MapPanel } from "@containers/Panels";
 
 const getComponent = (component: ComponentPanel) => {
   switch (component) {
     case ComponentPanel.speed:
-      return <div>Speed</div>;
+      return <div>Coming soon</div>;
     case ComponentPanel.battery:
-      return <div>Battery</div>;
+      return <BatteryPanel />;
     case ComponentPanel.location:
       return <MapPanel />;
     default:

@@ -80,7 +80,11 @@ export const PanelsGrid: React.FC<PanelsGridProps> = ({
             </Box>
 
             {/* Component Container that takes remaining height */}
-            <Box sx={{ flexGrow: 1, height: "100%" }}>{component}</Box>
+            <Box
+              sx={{ flexGrow: 1, minHeight: 0, display: "flex", width: "100%" }}
+            >
+              {component}
+            </Box>
           </Paper>
         ))}
       </ResponsiveGridLayout>

@@ -28,6 +28,7 @@
       "@components/*": ["./src/components/*"],
       "@containers/*": ["./src/containers/*"],
       "@theme/*": ["./src/theme/*"],
+      "@storyHelpers/*": ["./src/storyHelpers/*"],
       "@api/*": ["./src/api/*"],
       "@websocket/*": ["./src/websocket/*"],
       "@shared/*": ["./../shared/*"]
