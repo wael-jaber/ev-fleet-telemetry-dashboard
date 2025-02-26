@@ -13,16 +13,17 @@ export class Vehicle {
     this.route = route;
     this.routeIndex = 0;
     this.telemetry = {
+      timeStamp: new Date().toISOString(),
       speed: 0,
       batteryLevel: 100,
       temperature: 25,
       tirePressure: 32,
       motorEfficiency: 100,
-      regenerativeBraking: false,
+      regenerativeBraking: Math.random() < 0.3, // 30% chance of regenerative braking
       location: this.route[this.routeIndex],
       odometer: 0,
       chargeStatus: ChargeStatus.Idle,
-      energyConsumption: 15,
+      energyConsumption: 0, // Will be dynamically calculated
       acceleration: 0,
       ambientTemperature: 25,
     };
@@ -44,6 +45,7 @@ export class Vehicle {
 
     this.depleteBattery();
     this.updateSpeedAndMove();
+    this.calculateEnergyConsumption();
     this.scheduleNextUpdate();
   }
 
@@ -52,27 +54,26 @@ export class Vehicle {
   }
 
   private depleteBattery(): void {
-    this.telemetry.batteryLevel -= 5;
-    if (this.telemetry.batteryLevel > 0) {
-      this.telemetry.chargeStatus = ChargeStatus.Discharging;
-      return;
-    }
-
-    this.telemetry.batteryLevel = 0;
-    this.telemetry.chargeStatus = ChargeStatus.Charging;
-    this.telemetry.speed = 0;
-  }
-
-  private chargeBattery(): void {
-    this.telemetry.batteryLevel += 10;
-    if (this.telemetry.batteryLevel < 100) {
+    if (this.telemetry.batteryLevel <= 0) {
+      this.telemetry.batteryLevel = 0;
       this.telemetry.chargeStatus = ChargeStatus.Charging;
       this.telemetry.speed = 0;
       return;
     }
 
-    this.telemetry.batteryLevel = 100;
-    this.telemetry.chargeStatus = ChargeStatus.Idle;
+    this.telemetry.batteryLevel -= Math.random() * 3 + 1; // Decrease battery between 1-3%
+    this.telemetry.chargeStatus = ChargeStatus.Discharging;
+  }
+
+  private chargeBattery(): void {
+    this.telemetry.batteryLevel += 10;
+    if (this.telemetry.batteryLevel >= 100) {
+      this.telemetry.batteryLevel = 100;
+      this.telemetry.chargeStatus = ChargeStatus.Idle;
+    } else {
+      this.telemetry.chargeStatus = ChargeStatus.Charging;
+      this.telemetry.speed = 0;
+    }
   }
 
   private updateSpeedAndMove(): void {
@@ -81,10 +82,42 @@ export class Vehicle {
       return;
     }
 
-    this.telemetry.speed = Math.floor(Math.random() * 61) + 30;
+    const speedVariance = Math.random() * 10 - 5; // Speed varies randomly by ±5 km/h
+    this.telemetry.speed = Math.max(
+      10,
+      Math.floor(Math.random() * 60 + 30) + speedVariance,
+    ); // Speed between 30-90 km/h
+
+    // Reduce speed if battery is low
+    if (this.telemetry.batteryLevel < 20) {
+      this.telemetry.speed *= 0.7; // Reduce speed by 30%
+    }
+
     this.routeIndex = (this.routeIndex + 1) % this.route.length;
     this.telemetry.location = this.route[this.routeIndex];
+
+    // Simulate real-world odometer increment
     this.telemetry.odometer += this.telemetry.speed * (4 / 3600);
+  }
+
+  private calculateEnergyConsumption(): void {
+    const { speed, regenerativeBraking, batteryLevel } = this.telemetry;
+    const terrainResistance = Math.random() * 3 + 1; // Random resistance factor (1-3)
+
+    // Base energy consumption calculation
+    let consumption = (speed / 10) * terrainResistance;
+
+    // Regenerative braking reduces energy consumption
+    if (regenerativeBraking) {
+      consumption *= 0.8; // Reduce consumption by 20%
+    }
+
+    // If battery is low, consumption is slightly lower due to power saving mode
+    if (batteryLevel < 15) {
+      consumption *= 0.9; // Reduce by 10%
+    }
+
+    this.telemetry.energyConsumption = Math.max(5, consumption); // Min energy consumption of 5 kWh
   }
 
   private scheduleNextUpdate(): void {
