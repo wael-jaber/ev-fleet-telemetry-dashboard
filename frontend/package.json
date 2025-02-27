@@ -24,6 +24,7 @@
     "dotenv": "^16.4.7",
     "i18next": "^24.2.2",
     "leaflet": "^1.9.4",
+    "notistack": "^3.0.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-grid-layout": "^1.5.0",
@@ -33,7 +34,8 @@
     "react-resizable": "^3.0.5",
     "react-use-websocket": "^4.13.0",
     "react-world-flags": "^1.6.0",
-    "recharts": "^2.15.1"
+    "recharts": "^2.15.1",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^3.2.4",

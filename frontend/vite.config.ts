@@ -30,6 +30,7 @@ export default defineConfig({
 
   resolve: {
     alias: {
+      "@hooks": path.resolve(__dirname, "src/hooks"),
       "@redux": path.resolve(__dirname, "src/redux"),
       "@locales": path.resolve(__dirname, "src/locales"),
       "@utils": path.resolve(__dirname, "src/utils"),
