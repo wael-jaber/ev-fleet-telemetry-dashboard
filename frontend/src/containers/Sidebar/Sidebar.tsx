@@ -12,12 +12,15 @@ import ArrowCircleLeftIcon from "@mui/icons-material/ArrowCircleLeft";
 import { DarkModeToggle } from "@containers/DarkModeToggle";
 import { FleetOverview } from "@containers/FleetOverview";
 import { VehicleList } from "@containers/VehicleList";
+import { LanguageSwitcher } from "@containers/LanguageSwitcher";
+import { useTranslation } from "react-i18next";
 
-const SIDEBAR_WIDTH = 260; // Ensure consistency across Dashboard.tsx
+const SIDEBAR_WIDTH = 260;
 
 export const Sidebar: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const isMobile = useMediaQuery("(max-width: 960px)");
+  const { t } = useTranslation();
 
   const toggleDrawer = () => setMobileOpen((prev) => !prev);
 
@@ -46,15 +49,18 @@ export const Sidebar: React.FC = () => {
               <ArrowCircleLeftIcon />
             </IconButton>
           ) : (
-            <Typography variant="h6">CUBONIC Fleet</Typography>
+            <Typography variant="h6">{t("SidePanel.CUBONICFleet")}</Typography>
           )}
-          <DarkModeToggle />
+          <Box display="flex" alignItems="center">
+            <LanguageSwitcher />
+            <DarkModeToggle />
+          </Box>
         </Box>
 
         <Box flex={1} overflow="auto">
           <Divider>
             <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>
-              Overview
+              {t("SidePanel.Overview")}
             </Typography>
           </Divider>
           <Box sx={{ mb: 2 }}>
@@ -62,7 +68,7 @@ export const Sidebar: React.FC = () => {
           </Box>
           <Divider>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-              Vehicle List
+              {t("SidePanel.VehicleList")}
             </Typography>
           </Divider>
           <Box>
@@ -71,12 +77,11 @@ export const Sidebar: React.FC = () => {
         </Box>
       </Box>
     ),
-    [isMobile],
+    [isMobile, t],
   );
 
   return (
     <>
-      {/* Mobile: Floating Burger Menu Button */}
       {isMobile && (
         <IconButton
           onClick={toggleDrawer}
@@ -87,14 +92,13 @@ export const Sidebar: React.FC = () => {
             bgcolor: "background.paper",
             borderRadius: "50%",
             boxShadow: 2,
-            zIndex: 1300, // Ensures it stays above other elements
+            zIndex: 1300,
           }}
         >
           <MenuIcon />
         </IconButton>
       )}
 
-      {/* Sidebar Drawer */}
       <Drawer
         variant={isMobile ? "temporary" : "permanent"}
         open={isMobile ? mobileOpen : true}
@@ -109,7 +113,7 @@ export const Sidebar: React.FC = () => {
             left: 0,
             top: 0,
             height: "100vh",
-            zIndex: 1200, // Ensures it stays above the grid but below the menu button
+            zIndex: 1200,
           },
         }}
       >

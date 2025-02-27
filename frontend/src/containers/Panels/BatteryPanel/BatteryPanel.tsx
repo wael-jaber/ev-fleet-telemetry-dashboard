@@ -5,13 +5,10 @@ import { XAxisProps, YAxisProps, TooltipProps } from "recharts";
 import { CustomBatteryTooltip } from "./CustomBatteryTooltip";
 import { BatteryList } from "@components/BatteryList";
 import { selectLatestTelemetryArray } from "@redux/store/slices/telemetrySlice";
+import { useTranslation } from "react-i18next";
 
-/**
- * The BatteryPanel component adapts the **ScatterGridChart** for battery monitoring.
- * - **Single vehicle:** Displays battery level over time.
- * - **Multi-vehicle:** Placeholder for now.
- */
 export const BatteryPanel: React.FC = () => {
+  const { t } = useTranslation();
   const latestTelemetry = useSelector(selectLatestTelemetryArray);
 
   const selectedVehicleId = useSelector(
@@ -23,9 +20,6 @@ export const BatteryPanel: React.FC = () => {
       state.telemetry.vehicles[selectedVehicleId]?.history ?? [],
   );
 
-  /**
-   * Placeholder: Multi-vehicle battery percentage list
-   */
   if (selectedVehicleId === "all") {
     return (
       <div style={{ overflowY: "auto", height: "100%", width: "100%" }}>
@@ -39,17 +33,11 @@ export const BatteryPanel: React.FC = () => {
     );
   }
 
-  /**
-   * Single vehicle: Prepare data for scatter grid chart.
-   */
   const chartData = selectedVehicleTelemetries.map((entry) => ({
-    x: new Date(entry.telemetry.timeStamp).getTime(), // Convert time to timestamp
+    x: new Date(entry.telemetry.timeStamp).getTime(),
     y: entry.telemetry.batteryLevel,
   }));
 
-  /**
-   * Custom X-Axis properties for time formatting
-   */
   const xAxisProps: Partial<XAxisProps> = {
     dataKey: "x",
     type: "number",
@@ -61,29 +49,26 @@ export const BatteryPanel: React.FC = () => {
         minute: "2-digit",
         second: "2-digit",
       }),
-    name: "Time (CET)",
+    name: t("Dashboard.DashboardGrid.Panels.BatteryPanel.xAxisLabel"),
   };
 
-  /**
-   * Custom Y-Axis properties (battery percentage)
-   */
   const yAxisProps: Partial<YAxisProps> = {
     dataKey: "y",
-    domain: [0, 100], // Battery level range
+    domain: [0, 100],
     unit: "%",
-    name: "Battery level",
+    name: t("Dashboard.DashboardGrid.Panels.BatteryPanel.yAxisLabel"),
   };
 
   const tooltipProps: Partial<TooltipProps<number, string>> = {
-    content: <CustomBatteryTooltip />, // Use custom tooltip component
+    content: <CustomBatteryTooltip />,
   };
 
   return (
     <div style={{ overflowY: "auto", height: "100%", width: "100%" }}>
       <ScatterGridChart
-        title="Battery Level Over Time"
+        title={t("Dashboard.DashboardGrid.Panels.BatteryPanel.title")}
         data={chartData}
-        pointColor="#82ca9d" // Greenish color for battery
+        pointColor="#82ca9d"
         xAxisProps={xAxisProps}
         yAxisProps={yAxisProps}
         tooltipProps={tooltipProps}

@@ -15,8 +15,10 @@ import {
   selectFilteredVehicles,
   setSelectedVehicle,
 } from "@redux/store/slices/telemetrySlice";
+import { useTranslation } from "react-i18next";
 
 export const VehicleList: React.FC = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch<AppDispatch>();
   const vehicles = useSelector(selectFilteredVehicles);
   const selectedVehicle = useSelector(
@@ -33,24 +35,23 @@ export const VehicleList: React.FC = () => {
   return (
     <Box sx={{ p: 2 }}>
       <List component="nav" sx={{ overflowY: "visible" }}>
-        {/* "All Vehicles" with Filter Button Inside */}
         <ListItemButton
           selected={selectedVehicle === "all"}
           onClick={handleAllClick}
         >
           <Grid container alignItems="center">
-            {/* Car Icon + "All Vehicles" Text */}
             <Grid item xs={10} display="flex" alignItems="center">
               <DirectionsCarIcon sx={{ mr: 1 }} />
-              <ListItemText primary="All Vehicles" />
+              <ListItemText
+                primary={t("SidePanel.FleetOverview.VehicleList.AllVehicles")}
+              />
             </Grid>
 
-            {/* Embedded Filter Button */}
             <Grid item xs={2} display="flex" justifyContent="flex-end">
               <IconButton
                 size="small"
                 onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering "All Vehicles" selection
+                  e.stopPropagation();
                   alert("Filter modal coming soon!");
                 }}
               >
@@ -60,7 +61,6 @@ export const VehicleList: React.FC = () => {
           </Grid>
         </ListItemButton>
 
-        {/* Individual Vehicles */}
         {vehicles.sort().map((vehicle) => (
           <ListItemButton
             key={vehicle}

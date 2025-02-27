@@ -12,19 +12,19 @@ const initialPanelPositions: PanelPositions = {
   desktop: [
     {
       id: "speed",
-      title: "Speed1",
+      title: "Redux.panelsPosition.desktop.speed",
       component: ComponentPanel.speed,
       layout: { x: 0, y: 1, w: 1, h: 1 },
     },
     {
       id: "battery",
-      title: "Battery1",
+      title: "Redux.panelsPosition.desktop.battery",
       component: ComponentPanel.battery,
       layout: { x: 1, y: 1, w: 1, h: 1 },
     },
     {
       id: "location",
-      title: "Location1",
+      title: "Redux.panelsPosition.desktop.location",
       component: ComponentPanel.location,
       layout: { x: 0, y: 0, w: 2, h: 1 },
     },
@@ -32,19 +32,19 @@ const initialPanelPositions: PanelPositions = {
   mobile: [
     {
       id: "speed",
-      title: "Speed2",
+      title: "Redux.panelsPosition.desktop.speed",
       component: ComponentPanel.speed,
       layout: { x: 0, y: 0, w: 1, h: 2 },
     },
     {
       id: "battery2",
-      title: "Battery2",
+      title: "Redux.panelsPosition.desktop.battery",
       component: ComponentPanel.battery,
       layout: { x: 0, y: 1, w: 1, h: 2 },
     },
     {
       id: "location2",
-      title: "Location2",
+      title: "Redux.panelsPosition.desktop.location",
       component: ComponentPanel.location,
       layout: { x: 0, y: 2, w: 2, h: 2 },
     },
