@@ -1,8 +1,9 @@
 import "./App.css";
 import { Dashboard } from "@containers/index";
-import "@locales/i18n";
+import { initI18n } from "@locales/i18n";
 
 function App() {
+  initI18n();
   return <Dashboard />;
 }
 

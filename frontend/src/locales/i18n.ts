@@ -9,16 +9,19 @@ const getLanguageFromURL = (): string => {
   return hash === "de" ? "de" : "en"; // Default to "en" if invalid or not present
 };
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: { translation: en },
-    de: { translation: de },
-  },
-  lng: getLanguageFromURL(), // Set language from URL hash
-  fallbackLng: false, // No fallback (only "en" and "de")
-  interpolation: {
-    escapeValue: false,
-  },
-});
+// Initialize i18n when the function is called
+const initI18n = () => {
+  i18n.use(initReactI18next).init({
+    resources: {
+      en: { translation: en },
+      de: { translation: de },
+    },
+    lng: getLanguageFromURL(), // Set language from URL hash
+    fallbackLng: false, // No fallback (only "en" and "de")
+    interpolation: {
+      escapeValue: false,
+    },
+  });
+};
 
-export default i18n;
+export { i18n, initI18n };
