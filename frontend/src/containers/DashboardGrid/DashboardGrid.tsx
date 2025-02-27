@@ -71,6 +71,7 @@ export const DashboardGrid: React.FC = () => {
           key={"mobile"}
           panels={mobile.map((panel) => ({
             ...panel,
+            title: t(panel.title),
             component: getComponent({ component: panel.component, t }), // Pass t function
           }))}
           onLayoutChange={handleDragStopMobile}

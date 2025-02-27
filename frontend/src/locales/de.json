@@ -43,5 +43,26 @@
         "location": "Standort"
       }
     }
+  },
+  "Notifications": {
+    "WebSocket": {
+      "ConnectionSuccessful": {
+        "title": "Verbindung hergestellt",
+        "message": "Erfolgreich mit dem Server verbunden."
+      },
+      "ConnectionFailed": {
+        "title": "Verbindung fehlgeschlagen",
+        "message": "Maximale Verbindungsversuche erreicht. Bitte Seite neu laden."
+      },
+      "ConnectionError": {
+        "title": "Verbindungsfehler",
+        "message": "Ein Fehler ist bei der WebSocket-Verbindung aufgetreten."
+      },
+      "ConnectionLost": {
+        "title": "Verbindung verloren",
+        "message1": "Versuche, die Verbindung wiederherzustellen",
+        "message2": "Wird in 5 Sekunden erneut versucht."
+      }
+    }
   }
 }

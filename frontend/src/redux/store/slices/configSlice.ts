@@ -32,19 +32,19 @@ const initialPanelPositions: PanelPositions = {
   mobile: [
     {
       id: "speed",
-      title: "Redux.panelsPosition.desktop.speed",
+      title: "Redux.panelsPosition.mobile.speed",
       component: ComponentPanel.speed,
       layout: { x: 0, y: 0, w: 1, h: 2 },
     },
     {
       id: "battery2",
-      title: "Redux.panelsPosition.desktop.battery",
+      title: "Redux.panelsPosition.mobile.battery",
       component: ComponentPanel.battery,
       layout: { x: 0, y: 1, w: 1, h: 2 },
     },
     {
       id: "location2",
-      title: "Redux.panelsPosition.desktop.location",
+      title: "Redux.panelsPosition.mobile.location",
       component: ComponentPanel.location,
       layout: { x: 0, y: 2, w: 2, h: 2 },
     },
@@ -54,11 +54,23 @@ const initialPanelPositions: PanelPositions = {
 interface ConfigState {
   theme: "light" | "dark";
   panelPositions: PanelPositions;
+  webSocket: {
+    isConnected: boolean;
+    wasConnected: boolean;
+    retryCount: number;
+    maxRetries: number;
+  };
 }
 
 const initialState: ConfigState = {
   theme: (localStorage.getItem("theme") as "light" | "dark") || "light",
   panelPositions: initialPanelPositions,
+  webSocket: {
+    isConnected: false,
+    wasConnected: false,
+    retryCount: 0,
+    maxRetries: 10,
+  },
 };
 
 const configSlice = createSlice({
@@ -91,6 +103,23 @@ const configSlice = createSlice({
         }
       });
     },
+    updateWebSocketStatus(state, action: PayloadAction<boolean>) {
+      // Store the previous connection state
+      state.webSocket.wasConnected = state.webSocket.isConnected;
+      // Update the current connection state
+      state.webSocket.isConnected = action.payload;
+
+      // Reset retry count when connected
+      if (action.payload) {
+        state.webSocket.retryCount = 0;
+      }
+    },
+    incrementWebSocketRetryCount(state) {
+      state.webSocket.retryCount += 1;
+    },
+    resetWebSocketRetryCount(state) {
+      state.webSocket.retryCount = 0;
+    },
   },
 });
 
@@ -98,5 +127,8 @@ export const {
   toggleTheme,
   updateMobilePanelPositions,
   updateDesktopPanelPositions,
+  updateWebSocketStatus,
+  incrementWebSocketRetryCount,
+  resetWebSocketRetryCount,
 } = configSlice.actions;
 export default configSlice.reducer;
