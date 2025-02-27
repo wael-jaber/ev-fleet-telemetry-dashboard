@@ -1,0 +1,1 @@
+import{a as o}from"./index-CAGvNhDm.js";function r(t,n){typeof t=="function"?t(n):t&&(t.current=n)}function i(...t){return o.useMemo(()=>t.every(n=>n==null)?null:n=>{t.forEach(e=>{r(e,n)})},t)}export{i as u};
