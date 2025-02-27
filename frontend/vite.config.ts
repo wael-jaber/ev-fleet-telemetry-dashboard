@@ -31,6 +31,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@redux": path.resolve(__dirname, "src/redux"),
+      "@locales": path.resolve(__dirname, "src/locales"),
       "@utils": path.resolve(__dirname, "src/utils"),
       "@consts": path.resolve(__dirname, "src/consts"),
       "@components": path.resolve(__dirname, "src/components"),

@@ -10,22 +10,29 @@ import {
 } from "@redux/store/slices/configSlice";
 import { ComponentPanel } from "@utils/types";
 import { BatteryPanel, MapPanel } from "@containers/Panels";
+import { useTranslation } from "react-i18next";
 
-const getComponent = (component: ComponentPanel) => {
+interface PanelComponentProps {
+  component: ComponentPanel;
+  t: (key: string) => string;
+}
+
+const getComponent = ({ component, t }: PanelComponentProps) => {
   switch (component) {
     case ComponentPanel.speed:
-      return <div>Coming soon</div>;
+      return <div>{t("Dashboard.DashboardGrid.Panels.ComingSoon")}</div>;
     case ComponentPanel.battery:
       return <BatteryPanel />;
     case ComponentPanel.location:
       return <MapPanel />;
     default:
-      return <div>Panel not found</div>;
+      return <div>{t("Dashboard.DashboardGrid.Panels.PanelNotFound")}</div>;
   }
 };
 
 export const DashboardGrid: React.FC = () => {
   const dispatch = useDispatch();
+  const { t } = useTranslation();
 
   const isMobile = useMediaQuery("(max-width: 960px)");
 
@@ -64,7 +71,7 @@ export const DashboardGrid: React.FC = () => {
           key={"mobile"}
           panels={mobile.map((panel) => ({
             ...panel,
-            component: getComponent(panel.component),
+            component: getComponent({ component: panel.component, t }), // Pass t function
           }))}
           onLayoutChange={handleDragStopMobile}
           breakpoints={{ lg: 1024, md: 960, sm: 480 }}
@@ -76,7 +83,8 @@ export const DashboardGrid: React.FC = () => {
           key={"desktop"}
           panels={desktop.map((panel) => ({
             ...panel,
-            component: getComponent(panel.component),
+            title: t(panel.title),
+            component: getComponent({ component: panel.component, t }), // Pass t function
           }))}
           onLayoutChange={handleDragStopDesk}
           cols={{ lg: 2, md: 2, sm: 2 }}

@@ -1,0 +1,47 @@
+{
+  "SidePanel": {
+    "CUBONICFleet": "CUBONIC Flotte",
+    "Overview": "Übersicht",
+    "VehicleList": "Fahrzeugliste",
+    "LanguageSwitcher": {
+      "English": "Englisch",
+      "German": "Deutsch"
+    },
+    "FleetOverview": {
+      "TotalVehicles": "Gesamtfahrzeuge",
+      "ActiveVehicles": "Aktive Fahrzeuge",
+      "AvgBatteryLevel": "Durchschnittlicher Batteriestand",
+      "AvgEnergyConsumption": "Durchschnittlicher Energieverbrauch",
+      "VehicleList": {
+        "AllVehicles": "Alle Fahrzeuge"
+      }
+    }
+  },
+  "Dashboard": {
+    "DashboardGrid": {
+      "Panels": {
+        "ComingSoon": "Kommt bald",
+        "PanelNotFound": "Panel nicht gefunden",
+        "BatteryPanel": {
+          "title": "Batteriestand über Zeit",
+          "xAxisLabel": "Zeit (CET)",
+          "yAxisLabel": "Batteriestand"
+        }
+      }
+    }
+  },
+  "Redux": {
+    "panelsPosition": {
+      "desktop": {
+        "speed": "Geschwindigkeits",
+        "battery": "Batterie",
+        "location": "Standort"
+      },
+      "mobile": {
+        "speed": "Geschwindigkeits",
+        "battery": "Batterie",
+        "location": "Standort"
+      }
+    }
+  }
+}

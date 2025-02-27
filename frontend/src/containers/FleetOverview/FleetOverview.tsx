@@ -7,12 +7,10 @@ import BoltIcon from "@mui/icons-material/Bolt";
 import { StatCard } from "@components/StatCard";
 import { useSelector } from "react-redux";
 import { selectFleetStats } from "@redux/store/slices/telemetrySlice";
+import { useTranslation } from "react-i18next"; // Import useTranslation
 
-/**
- * FleetOverview Component
- * Displays aggregated fleet-wide statistics for the fleet manager.
- */
 export const FleetOverview: React.FC = () => {
+  const { t } = useTranslation(); // Translation hook
   const {
     totalVehicles,
     activeVehicles,
@@ -25,7 +23,7 @@ export const FleetOverview: React.FC = () => {
       <Grid container spacing={1}>
         <Grid item xs={12}>
           <StatCard
-            title="Total Vehicles"
+            title={t("SidePanel.FleetOverview.TotalVehicles")} // Translation key
             value={totalVehicles}
             icon={<DirectionsCarIcon fontSize="large" />}
             iconColor="primary.main"
@@ -34,7 +32,7 @@ export const FleetOverview: React.FC = () => {
 
         <Grid item xs={12}>
           <StatCard
-            title="Active Vehicles"
+            title={t("SidePanel.FleetOverview.ActiveVehicles")} // Translation key
             value={activeVehicles}
             icon={<SpeedIcon fontSize="large" />}
             iconColor="secondary.main"
@@ -43,7 +41,7 @@ export const FleetOverview: React.FC = () => {
 
         <Grid item xs={12}>
           <StatCard
-            title="Avg Battery Level"
+            title={t("SidePanel.FleetOverview.AvgBatteryLevel")} // Translation key
             value={`${averageBatteryLevel}%`}
             icon={<BatteryChargingFullIcon fontSize="large" />}
             iconColor={
@@ -58,7 +56,7 @@ export const FleetOverview: React.FC = () => {
 
         <Grid item xs={12}>
           <StatCard
-            title="Avg Energy Consumption"
+            title={t("SidePanel.FleetOverview.AvgEnergyConsumption")} // Translation key
             value={`${averageEnergyConsumption} kWh`}
             icon={<BoltIcon fontSize="large" />}
             iconColor="warning.main"

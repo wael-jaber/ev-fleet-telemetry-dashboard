@@ -1,0 +1,47 @@
+{
+  "SidePanel": {
+    "CUBONICFleet": "CUBONIC Fleet",
+    "Overview": "Overview",
+    "VehicleList": "Vehicle List",
+    "LanguageSwitcher": {
+      "English": "English",
+      "German": "German"
+    },
+    "FleetOverview": {
+      "TotalVehicles": "Total Vehicles",
+      "ActiveVehicles": "Active Vehicles",
+      "AvgBatteryLevel": "Avg Battery Level",
+      "AvgEnergyConsumption": "Avg Energy Consumption",
+      "VehicleList": {
+        "AllVehicles": "All Vehicles"
+      }
+    }
+  },
+  "Dashboard": {
+    "DashboardGrid": {
+      "Panels": {
+        "ComingSoon": "Coming soon",
+        "PanelNotFound": "Panel not found",
+        "BatteryPanel": {
+          "title": "Battery Level Over Time",
+          "xAxisLabel": "Time (CET)",
+          "yAxisLabel": "Battery Level"
+        }
+      }
+    }
+  },
+  "Redux": {
+    "panelsPosition": {
+      "desktop": {
+        "speed": "Speed",
+        "battery": "Battery",
+        "location": "Location"
+      },
+      "mobile": {
+        "speed": "Speed",
+        "battery": "Battery",
+        "location": "Location"
+      }
+    }
+  }
+}
