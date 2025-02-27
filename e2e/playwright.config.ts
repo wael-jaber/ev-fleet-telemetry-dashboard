@@ -3,7 +3,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 
 // Load env vars from the root .env file
-dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const frontendPort = process.env.FRONTEND_PORT || '3000';
 const frontendHost = process.env.TEST_HOST || 'localhost';

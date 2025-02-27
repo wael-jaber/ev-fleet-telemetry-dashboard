@@ -1,50 +1,66 @@
-FROM node:20 as build
+# --- Build Stage ---
+    FROM node:20 as build
 
-WORKDIR /app
+    WORKDIR /app
 
-RUN npm install -g pnpm@latest
+    # Install PNPM globally
+    RUN npm install -g pnpm@latest
 
-# avoid interactive prompts
-ENV PNPM_INSTALL_MODE=hoist
-ENV CI=true
+    # Avoid interactive prompts & enforce workspace hoisting
+    ENV PNPM_INSTALL_MODE=hoist
+    ENV CI=true
 
-# for caching
-COPY package.json pnpm-lock.yaml ./
+    # Accept build-time arguments
+    ARG VITE_BACKEND_PORT
+    ARG NODE_ENV=production
 
-# Install dependencies **only for the backend** (avoiding workspace issues)
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter backend...
+    # Set environment variables for the build stage
+    ENV VITE_BACKEND_PORT=$VITE_BACKEND_PORT
+    ENV NODE_ENV=$NODE_ENV
 
-# Remove potentially wrong esbuild binary before reinstalling it for the correct platform
-RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
-    && npm rebuild esbuild \
-    && pnpm rebuild esbuild
+    # Copy only package-related files for better caching
+    COPY package.json pnpm-lock.yaml ./
 
+    # Install dependencies **only for the backend** (avoiding workspace issues)
+    RUN pnpm install --frozen-lockfile --ignore-scripts --filter backend...
 
-COPY ./backend ./backend
-COPY ./shared ./shared
+    # Remove potentially wrong esbuild binary before reinstalling it for the correct platform
+    RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
+        && npm rebuild esbuild \
+        && pnpm rebuild esbuild
 
-WORKDIR /app/backend
+    # Copy application code
+    COPY ./backend ./backend
+    COPY ./shared ./shared
 
-# Ensure esbuild is reinstalled in the backend workspace (to avoid monorepo conflicts)
-RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
-    && npm install esbuild --force \
-    && pnpm rebuild esbuild
+    WORKDIR /app/backend
 
-# Run the backend build
-RUN pnpm run build
+    # Ensure esbuild is reinstalled in the backend workspace (to avoid monorepo conflicts)
+    RUN rm -rf node_modules/.pnpm/esbuild* node_modules/esbuild \
+        && npm install esbuild --force \
+        && pnpm rebuild esbuild
 
+    # install backend deps
+    RUN pnpm install
 
-# Production image
+    # Run the backend build
+    RUN pnpm run build
 
-FROM node:20 as runtime
+    # --- Production Stage ---
+    FROM node:20 as runtime
 
-WORKDIR /app
+    WORKDIR /app
 
-# Copy only the bundled backend files
-COPY --from=build /app/backend/dist/bundle.js /app/bundle.js
+    # Copy only the built backend files
+    COPY --from=build /app/backend/dist /app/dist
+    COPY --from=build /app/backend/package.json /app/package.json
+    COPY --from=build /app/backend/node_modules /app/node_modules
 
-ENV PORT=5001
-EXPOSE ${PORT}
+    # Set environment variables for runtime
+    ENV VITE_BACKEND_PORT=${VITE_BACKEND_PORT:-5001}
+    ENV NODE_ENV=production
 
-# Start the backend
-CMD ["node", "/app/bundle.js"]
+    EXPOSE ${VITE_BACKEND_PORT}
+
+    # Start the backend
+    CMD ["node", "/app/dist/bundle.js"]
