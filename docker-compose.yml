@@ -5,10 +5,13 @@ services:
     build:
       context: .
       dockerfile: backend/Dockerfile
+      args:
+        - VITE_BACKEND_HOST=${VITE_BACKEND_HOST}
+        - VITE_BACKEND_PORT=${VITE_BACKEND_PORT:-5001}
     ports:
-      - '${BACKEND_PORT:-5001}:${BACKEND_PORT:-5001}'
+      - '${VITE_BACKEND_PORT:-5001}:${VITE_BACKEND_PORT:-5001}'
     environment:
-      - PORT=${BACKEND_PORT:-5001}
+      - PORT=${VITE_BACKEND_PORT:-5001}
     env_file:
       - .env
     networks:
@@ -19,7 +22,7 @@ services:
           'CMD',
           'curl',
           '-f',
-          'http://localhost:${BACKEND_PORT:-5001}/health-check',
+          '${BACKEND_HEALTHCHECK_URL:-http://localhost:5001/health-check}',
         ]
       interval: 10s
       retries: 5
@@ -29,12 +32,13 @@ services:
     build:
       context: .
       dockerfile: frontend/Dockerfile
+      args:
+        - VITE_BACKEND_HOST=${VITE_BACKEND_HOST}
+        - VITE_BACKEND_PORT=${VITE_BACKEND_PORT:-5001}
     ports:
-      - '${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}'
+      - '80:${FRONTEND_PORT:-3000}'
     environment:
       - FRONTEND_PORT=${FRONTEND_PORT:-3000}
-      - BACKEND_HOST=backend
-      - BACKEND_PORT=${BACKEND_PORT:-5001}
     env_file:
       - .env
     depends_on:
@@ -42,6 +46,12 @@ services:
         condition: service_healthy
     networks:
       - app-network
+    healthcheck:
+      test:
+        ['CMD', 'curl', '-f', '${FRONTEND_HEALTHCHECK_URL:-http://localhost}']
+      interval: 10s
+      retries: 5
+      start_period: 5s
 
   e2e:
     build:

@@ -1,19 +1,33 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "path";
 import dotenv from "dotenv";
 
+// Load environment variables from .env file
+const env = loadEnv("", path.resolve(__dirname, "../"));
+
+// Ensure process.env is populated for local development
 dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 export default defineConfig({
   plugins: [react()],
-  // Point envDir to the root so that .env in the root is picked up
-  envDir: path.resolve(__dirname, "../"),
+
+  envDir: path.resolve(__dirname, "../"), // Ensure .env is loaded
+
   server: {
-    host: "0.0.0.0", // This ensures Vite binds to all network interfaces
-    // Use the FRONTEND_PORT from the root .env
+    host: "0.0.0.0", // Ensures Vite binds to all network interfaces (for Docker)
     port: Number(process.env.FRONTEND_PORT) || 3000,
   },
+
+  define: {
+    "import.meta.env.VITE_BACKEND_HOST": JSON.stringify(
+      env.VITE_BACKEND_HOST || process.env.VITE_BACKEND_HOST,
+    ),
+    "import.meta.env.VITE_BACKEND_PORT": JSON.stringify(
+      env.VITE_BACKEND_PORT || process.env.VITE_BACKEND_PORT,
+    ),
+  },
+
   resolve: {
     alias: {
       "@redux": path.resolve(__dirname, "src/redux"),
@@ -28,7 +42,8 @@ export default defineConfig({
       "@shared": path.resolve(__dirname, "../shared"),
     },
   },
-  // @ts-expect-error : they haven't fixed this still
+
+  // @ts-expect-error : lib error
   test: {
     globals: true,
     environment: "jsdom",
