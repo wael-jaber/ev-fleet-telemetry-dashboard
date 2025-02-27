@@ -1,1 +1,0 @@
-export { BatteryPanel } from "./BatteryPanel";
