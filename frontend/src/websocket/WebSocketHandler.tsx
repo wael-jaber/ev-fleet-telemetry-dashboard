@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import useWebSocket, { ReadyState } from "react-use-websocket";
 import { useDispatch, useSelector } from "react-redux";
-import { useTranslation } from "react-i18next"; // Add import for useTranslation
+import { useTranslation } from "react-i18next";
 import {
   updateTelemetry,
   setWebSocketConnected,
@@ -22,7 +22,7 @@ import { RootState } from "@redux/store";
 export const WebSocketHandler = () => {
   const dispatch = useDispatch();
   const { pushNotification } = useNotification();
-  const { t } = useTranslation(); // Initialize useTranslation hook
+  const { t } = useTranslation();
 
   // Get WebSocket state from Redux
   const { webSocket } = useSelector((state: RootState) => state.config);
@@ -32,12 +32,31 @@ export const WebSocketHandler = () => {
   const initialConnectionAttemptRef = useRef<boolean>(true);
   const hasShownMaxRetriesErrorRef = useRef<boolean>(false);
   const isCurrentlyConnectedRef = useRef<boolean>(false);
-  // Track the last known state of WebSocket connection from previous render
   const wasActuallyConnectedRef = useRef<boolean>(false);
+  const lastActivityTimeRef = useRef<number>(Date.now());
+  const pingIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const networkOnlineRef = useRef<boolean>(navigator.onLine);
   const retryInterval = 3000; // 3 seconds
+  const pingInterval = 15000; // 15 seconds
 
-  const { lastMessage, readyState } = useWebSocket(WS_URL, {
+  // Add a ping mechanism to detect stale connections
+  const sendPing = (socketInstance: WebSocket | null) => {
+    if (socketInstance && socketInstance.readyState === WebSocket.OPEN) {
+      try {
+        socketInstance.send(JSON.stringify({ type: "ping" }));
+      } catch (error) {
+        console.error("Failed to send ping:", error);
+      }
+    }
+  };
+
+  const { lastMessage, readyState, getWebSocket } = useWebSocket(WS_URL, {
     shouldReconnect: () => {
+      // Don't reconnect if we're offline
+      if (!networkOnlineRef.current) {
+        return false;
+      }
+
       // If we've reached max retries, don't reconnect
       if (retryCount > maxRetries) {
         if (!hasShownMaxRetriesErrorRef.current) {
@@ -59,6 +78,17 @@ export const WebSocketHandler = () => {
       dispatch(resetWebSocketRetryCount());
       hasShownMaxRetriesErrorRef.current = false;
       isCurrentlyConnectedRef.current = true;
+      lastActivityTimeRef.current = Date.now();
+
+      // Setup ping interval to keep connection alive and detect stale connections
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+      }
+
+      pingIntervalRef.current = setInterval(() => {
+        // dirty casting but it works ... and i have to get to sleep ...
+        sendPing(getWebSocket() as WebSocket | null);
+      }, pingInterval);
 
       // Only show success notification if this isn't the first connection attempt
       // or if we've had a previous successful connection
@@ -74,6 +104,12 @@ export const WebSocketHandler = () => {
       initialConnectionAttemptRef.current = false;
     },
     onClose: () => {
+      // Stop the ping interval
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
+      }
+
       // Check if the connection just dropped from an established state
       const connectionJustDropped = isCurrentlyConnectedRef.current;
       isCurrentlyConnectedRef.current = false;
@@ -83,7 +119,6 @@ export const WebSocketHandler = () => {
         dispatch(incrementWebSocketRetryCount());
 
         // Show error notification if the connection just dropped from an established state
-        // CRITICAL FIX: Use only the local ref to determine if connection dropped
         if (connectionJustDropped) {
           pushNotification(
             t("Notifications.WebSocket.ConnectionError.title"),
@@ -92,8 +127,8 @@ export const WebSocketHandler = () => {
           );
         }
 
-        // Only show retry notification if we haven't reached max retries
-        if (retryCount < maxRetries) {
+        // Only show retry notification if we haven't reached max retries and we're online
+        if (retryCount < maxRetries && networkOnlineRef.current) {
           pushNotification(
             t("Notifications.WebSocket.ConnectionLost.title"),
             `${t("Notifications.WebSocket.ConnectionLost.message1")} (${retryCount + 1}/${maxRetries}). ` +
@@ -117,6 +152,71 @@ export const WebSocketHandler = () => {
       }
     },
   });
+
+  // Handle browser online/offline events
+  useEffect(() => {
+    const handleOnline = () => {
+      networkOnlineRef.current = true;
+
+      // Don't show notification on initial load
+      if (!initialConnectionAttemptRef.current) {
+        pushNotification(
+          "Network Status",
+          "Network connection restored. Attempting to reconnect.",
+          "info",
+        );
+      }
+    };
+
+    const handleOffline = () => {
+      networkOnlineRef.current = false;
+
+      // Don't show notification on initial load
+      if (!initialConnectionAttemptRef.current) {
+        pushNotification(
+          "Network Status",
+          "Network connection lost. WebSocket connection will resume when network is available.",
+          "warning",
+        );
+      }
+    };
+
+    window.addEventListener("online", handleOnline);
+    window.addEventListener("offline", handleOffline);
+
+    return () => {
+      window.removeEventListener("online", handleOnline);
+      window.removeEventListener("offline", handleOffline);
+    };
+  }, [pushNotification]);
+
+  // Ping detection - Check for stale connections
+  useEffect(() => {
+    const staleConnectionInterval = setInterval(() => {
+      // If we're supposedly connected but haven't had activity in 30 seconds
+      const currentTime = Date.now();
+      const timeSinceLastActivity = currentTime - lastActivityTimeRef.current;
+
+      if (
+        isCurrentlyConnectedRef.current &&
+        timeSinceLastActivity > 30000 && // 30 seconds
+        networkOnlineRef.current // Only do this check if we're online
+      ) {
+        console.warn("WebSocket connection seems stale. Forcing reconnection.");
+        console.warn(`Time since last activity: ${timeSinceLastActivity}ms`);
+
+        // Force a reconnection by closing the current WebSocket
+        const webSocket = getWebSocket();
+        if (webSocket) {
+          webSocket.close();
+        }
+      }
+    }, 10000); // Check every 10 seconds
+
+    return () => {
+      clearInterval(staleConnectionInterval);
+    };
+  }, [getWebSocket]);
 
   /**
    * Update WebSocket connection status in Redux
@@ -150,13 +250,16 @@ export const WebSocketHandler = () => {
         "error",
       );
     }
-  }, [readyState, dispatch, pushNotification, t]); // Added t to dependency array
+  }, [readyState, dispatch, pushNotification, t]);
 
   /**
    * Process incoming WebSocket messages.
    */
   useEffect(() => {
     if (lastMessage?.data) {
+      // Update the activity timestamp whenever we receive any message
+      lastActivityTimeRef.current = Date.now();
+
       try {
         const message: IWebSocketMessage = JSON.parse(lastMessage.data);
 
@@ -177,6 +280,16 @@ export const WebSocketHandler = () => {
       }
     }
   }, [lastMessage, dispatch]);
+
+  // Clean up all intervals on unmount
+  useEffect(() => {
+    return () => {
+      if (pingIntervalRef.current) {
+        clearInterval(pingIntervalRef.current);
+        pingIntervalRef.current = null;
+      }
+    };
+  }, []);
 
   return null;
 };

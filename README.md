@@ -1,204 +1,284 @@
 # EV Fleet Telemetry Dashboard
 
-The EV Fleet Telemetry Dashboard is a web application designed to monitor real-time telemetry data from electric vehicles. It consists of:
+![example branch parameter](https://github.com/wael-jaber/ev-fleet-telemetry-dashboard/actions/workflows/ci.yaml/badge.svg?branch=develop)
+![Codecov](https://codecov.io/gh/wael-jaber/ev-fleet-telemetry-dashboard/branch/develop/graph/badge.svg)
+[![Storybook](https://cdn.jsdelivr.net/gh/storybookjs/brand@master/badge/badge-storybook.svg)](https://wael-jaber.github.io/ev-fleet-telemetry-dashboard/storybook)
 
-- Frontend: A dashboard built with React.
-- Backend: An Express-based WebSocket server that simulates real-time vehicle telemetry data.
-- Testing & CI/CD: Automated unit and integration tests, with support for end-to-end testing.
+A sophisticated real-time monitoring solution for electric vehicle fleets.
 
-## Project Structure
+## Application Preview
+
+![Dashboard Demo](docs/screenshots/dashboard-demo.gif)
+
+_Real-time dashboard showing vehicle telemetry data and interactive features_
+
+## Features
+
+- **Real-time Vehicle Monitoring**: Track up to 10 vehicles with 12 telemetry data points per vehicle
+- **Interactive Dashboard**: Customizable layout with drag-and-drop panels
+- **Interactive Map**: Real-time vehicle locations displayed on an interactive map
+- **Detailed Analytics**: Overview panel showing fleet-wide statistics and individual vehicle details
+- **Basic Notifications**: System to display critical events
+- **Dark Mode**: Toggle between light and dark themes
+- **Internationalization**: Support for multiple languages (EN and DE)
+
+## Architecture
 
 ```
 /ev-fleet-telemetry-dashboard
-│── backend/            # Express WebSocket server
-│── frontend/           # Frontend web application
-│── e2e/               # End-to-end test suite
-│── Makefile           # Development commands
-│── package.json       # Dev dependencies & scripts
-│── docker-compose.yml # Docker configurations
-│── .husky/            # Pre-commit hooks setup
-│── .env.example       # Example environment variables
+│── backend/            # Express WebSocket server for simulating telemetry data
+│── frontend/           # React dashboard application
+│── e2e/                # Playwright end-to-end tests
+│── shared/types        # Shared TypeScript interfaces and types
+│── Makefile            # Development commands for easy workflow
+│── docker-compose.yml  # Docker configuration for containerized deployment
 ```
 
-## Installation & Setup
+### Tech Stack
+
+#### Frontend
+
+- **Framework**: React 19 with TypeScript
+- **UI**: Material UI v6
+- **State Management**: Redux Toolkit
+- **Data Visualization**: Recharts
+- **Mapping**: Leaflet/React-Leaflet
+- **Layout**: React Grid Layout for customizable dashboard
+- **Real-time Communication**: WebSockets
+- **Testing**: Vitest, React Testing Library
+- **Component Development**: Storybook
+
+#### Backend
+
+- **Runtime**: Node.js with TypeScript
+- **Server**: Express
+- **Real-time Communication**: WebSockets (ws)
+- **Testing**: Vitest, Supertest
+
+#### Quality & Tooling
+
+- **E2E Testing**: Playwright
+- **Containerization**: Docker
+- **Git Workflow**: Husky, Commitlint, Commitizen
+- **Code Quality**: ESLint, Prettier
+
+## Getting Started
 
 ### Prerequisites
 
 Ensure you have the following installed:
 
-- GNU Make (for `make` commands)
-- Docker (For containerized development)
-- Node.js (Latest LTS)
-- pnpm (Package Manager)
-- A `.env` file based on `.env.example`
+- [Node.js](https://nodejs.org/) (Latest LTS version)
+- [pnpm](https://pnpm.io/installation) (Package Manager)
+- [Docker](https://docs.docker.com/get-docker/) and [Docker Compose](https://docs.docker.com/compose/install/) (for containerized deployment)
+- [GNU Make](https://www.gnu.org/software/make/) (for using the Makefile commands)
 
-### Install Dependencies
+You'll also need to create a `.env` file based on the provided `.env.example`.
 
-```sh
-make install
-```
+### Installation
+
+1. Clone the repository
+
+   ```sh
+   git clone https://github.com/yourusername/ev-fleet-telemetry-dashboard.git
+   cd ev-fleet-telemetry-dashboard
+   ```
+
+2. Copy the environment example file and configure as needed
+
+   ```sh
+   cp .env.example .env
+   ```
+
+3. Install dependencies
+   ```sh
+   make install
+   # or directly: pnpm install
+   ```
 
 ## Running the Project
 
 ### Local Development
 
-Start Backend:
-
-```sh
-make up-backend
-```
-
-Start Frontend:
-
-```sh
-make up-frontend
-```
-
-Start Full Stack (Frontend + Backend):
+Start the complete stack (frontend + backend):
 
 ```sh
 make up
 ```
 
-### Running in Docker
-
-The Docker setup consists of **multi-stage builds** for both the frontend and backend. In the final image, we do not have access to `package.json` commands. Ensure that a `.env` file exists before running.
-
-Start Backend (Docker):
+Or start services individually:
 
 ```sh
-make docker-up-backend
+# Backend only
+make up-backend
+
+# Frontend only
+make up-frontend
 ```
 
-Start Frontend (Docker):
+### Docker Deployment
 
-```sh
-make docker-up-frontend
-```
-
-Start Full Stack in Docker:
+Build and run the complete stack in Docker:
 
 ```sh
 make docker-up
 ```
 
-## Testing Workflow
-
-### Run Tests Locally
-
-Backend Tests:
+Or build and run services individually:
 
 ```sh
-make test-backend
+# Backend only
+make docker-up-backend
+
+# Frontend only
+make docker-up-frontend
 ```
 
-Frontend Tests:
+Note: These commands build production-ready containers and are not intended for development purposes.
 
-```sh
-make test-frontend
-```
+## Testing
 
-Run All Tests:
+Run all tests (except E2E):
 
 ```sh
 make test
+# or: pnpm test
 ```
 
-Run End-to-End (E2E) Tests:
+Run specific test suites:
 
 ```sh
+# Backend tests
+make test-backend
+
+# Frontend tests
+make test-frontend
+
+# End-to-end tests (ensure frontend and backend services are running first)
 make test-e2e
 ```
 
-### Run Tests in Docker (Without Docker Compose)
+## Development Workflow
 
-Backend Tests:
+### Code Quality
 
-```sh
-make docker-test-backend
-```
-
-Frontend Tests:
-
-```sh
-make docker-test-frontend
-```
-
-Run All Tests in Docker:
-
-```sh
-make docker-test
-```
-
-Run End-to-End (E2E) Tests in Docker:
-
-```sh
-make docker-test-e2e
-```
-
-## Code Formatting & Linting
-
-Run Format & Lint Checks:
+Format and lint the codebase:
 
 ```sh
 pnpm run format
 pnpm run lint
 ```
 
-Auto-Fix Issues:
+### Commit Guidelines
+
+This project follows [Conventional Commits](https://www.conventionalcommits.org/) using Commitizen and enforces them through Husky git hooks:
 
 ```sh
-pnpm run lint --fix
+# Use Commitizen for guided commit creation
+pnpm run commit
 ```
 
-Run Tests Before Committing:
+#### Git Hooks
+
+The project includes the following Husky hooks:
+
+- **pre-commit**: Runs formatting, linting, and tests before allowing commits
+
+  ```sh
+  #!/usr/bin/env sh
+  . "$(dirname -- "$0")/_/husky.sh"
+
+  npm run precommit && git add .
+  ```
+
+- **commit-msg**: Validates commit messages against conventional commit format
+
+  ```sh
+  #!/bin/sh
+  . "$(dirname "$0")/_/husky.sh"
+
+  # Run commitlint to ensure commit messages follow the convention
+  pnpm exec commitlint --edit $1
+  ```
+
+These hooks ensure code quality and consistent commit messages throughout the project.
+
+### Pre-commit Checks
+
+Run format, lint, and tests before committing:
 
 ```sh
 pnpm run precommit
 ```
 
-## Commit Guidelines
+## Configuration
 
-This project follows Conventional Commits using Commitizen.
+The application can be configured through environment variables. Copy `.env.example` to `.env` and adjust as needed:
 
-To Make a Proper Commit:
+```
+# Frontend Configuration
+FRONTEND_PORT=3001
 
-```sh
-pnpm run commit
+# Backend Configuration
+VITE_BACKEND_HOST=localhost
+VITE_BACKEND_PORT=443
+
+# Health Check Configuration
+BACKEND_HEALTHCHECK_URL=http://localhost:${VITE_BACKEND_PORT}/health-check
+FRONTEND_HEALTHCHECK_URL=http://localhost:${FRONTEND_PORT}
 ```
 
-This will guide you through structuring your commit message properly.
+## CI/CD Pipeline
 
-## Development Workflow
+This project uses GitHub Actions for continuous integration and deployment:
 
-1. Clone the repository & install dependencies
-   ```sh
-   git clone https://github.com/wael-jaber/ev-fleet-telemetry-dashboard.git
-   cd ev-fleet-telemetry-dashboard
-   make install
-   ```
-2. Start the development environment
-   ```sh
-   make up
-   ```
-3. Run tests before committing changes
-   ```sh
-   make test
-   pnpm run precommit
-   ```
-4. Push code & create PRs following commit guidelines
-   ```sh
-   git push origin feature-branch
-   ```
+### Continuous Integration
 
-## Next Steps
+The CI workflow automatically runs on every push and pull request:
 
-- Add WebSocket API documentation (`API.md`)
-- Write test strategy (`TESTING.md`)
-- Setup GitHub Actions for automated CI/CD (Optional)
+- Lints and tests frontend code
+- Lints and tests backend code
+- Generates and uploads code coverage reports
 
-To start the project, run:
+### Staging Deployment
 
-```sh
-make up
-```
+The staging deployment workflow runs on pushes to the develop branch:
+
+- Builds and pushes Docker images to GitHub Container Registry
+- Deploys the application to Render
+- Runs end-to-end tests against the staging environment
+- Deploys Storybook to GitHub Pages
+
+These workflows ensure code quality and provide automated testing and deployment.
+
+> **Note**: The current CI/CD implementation was designed with time constraints in mind and may not follow all best practices. Future improvements could include better workflow separation, more granular job definitions, and improved caching strategies.
+
+## Deployment
+
+The application is deployed on Render's free tier:
+
+- **Backend**: [https://backend-staging-1zqj.onrender.com](https://backend-staging-1zqj.onrender.com)
+- **Frontend**: [https://frontend-staging-0ys2.onrender.com](https://frontend-staging-0ys2.onrender.com)
+- **Storybook**: [https://wael-jaber.github.io/ev-fleet-telemetry-dashboard/storybook](https://wael-jaber.github.io/ev-fleet-telemetry-dashboard/storybook/?path=/story/components-batterylist--light-mode)
+
+**Note**: These services are hosted on Render's free tier, which means they automatically spin down after 15 minutes of inactivity. The first request after inactivity may take up to 50+ seconds to respond while the service restarts.
+
+## Project Status & Future Development
+
+This project implements the majority of the planned features:
+
+- [x] Real-time data simulation
+- [x] Dashboard with overview and individual vehicle panels
+- [x] Interactive map
+- [x] Customizable dashboard layout
+- [x] Dark mode
+- [x] Basic notifications
+- [x] Internationalization (i18n)
+
+### Planned Improvements
+
+- [ ] Add vehicle filtering and sorting
+- [ ] Implement full notification center
+- [ ] Add offline support and alert system
+- [ ] Expand test coverage and documentation
+- [ ] Add WebSocket API documentation
