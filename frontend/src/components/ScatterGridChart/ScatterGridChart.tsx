@@ -58,7 +58,7 @@ export const ScatterGridChart: React.FC<ScatterGridChartProps> = ({
         Math.max(0, firstVisibleIndex - offset),
         Math.min(lastIndex + 1, firstVisibleIndex - offset + maxVisiblePoints),
       ),
-    [sortedData, offset, maxVisiblePoints],
+    [sortedData, firstVisibleIndex, offset, lastIndex, maxVisiblePoints],
   );
 
   /**
